@@ -1,29 +1,65 @@
-// ChatFlow - Real-time Messaging App
-// Complete JavaScript Implementation
+// Make functions globally available
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+window.showAuthForm = showAuthForm;
+window.showUserSettings = showUserSettings;
+window.showUserSearch = showUserSearch;
+window.filterChats = filterChats;
+window.closeChat = closeChat;
+window.handleMessageKeydown = handleMessageKeydown;
+window.sendMessage = sendMessage;
+window.showMessageActions = showMessageActions;
+window.editMessage = editMessage;
+window.forwardMessage = forwardMessage;
+window.deleteMessageForMe = deleteMessageForMe;
+window.deleteMessageForEveryone = deleteMessageForEveryone;
+window.closeMessageActions = closeMessageActions;
+window.closeForward = closeForward;
+window.searchForwardUsers = searchForwardUsers;
+window.closeUserSearch = closeUserSearch;
+window.showUserProfile = showUserProfile;
+window.closeUserProfile = closeUserProfile;
+window.startChatFromProfile = startChatFromProfile;
+window.startVoiceCall = startVoiceCall;
+window.startVideoCall = startVideoCall;
+window.acceptCall = acceptCall;
+window.rejectCall = rejectCall;
+window.endCall = endCall;
+window.toggleMute = toggleMute;
+window.toggleCamera = toggleCamera;
+window.showDeleteAccount = showDeleteAccount;
+window.closeDeleteAccount = closeDeleteAccount;
+window.deleteAccount = deleteAccount;
+window.handleLogout = handleLogout;
+window.triggerFileUpload = triggerFileUpload;
+window.handleFileSelect = handleFileSelect;
+window.toggleVoiceRecording = stopVoiceRecording;
+window.playAudio = playAudio;
+window.downloadFile = downloadFile;
+window.previewFile = previewFile;
+window.updateProfileName = updateProfileName;
 
-// ============================================
-// CONFIGURATION
-// ============================================
-const SUPABASE_URL = 'https://qyantbqmxavlobsiexpn.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5YW50YnFteGF2bG9ic2lleHBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMDc4MjMsImV4cCI6MjA5MjU4MzgyM30.8VBtpmuqDcn6o5fugWYnu3Qzdhfytb9vBoS7yV0oJ5E';
-
+// Supabase client reference
 let supabase = null;
 
 // ============================================
 // INITIALIZATION
 // ============================================
 function initSupabase() {
-  if (typeof window.supabase === 'undefined') {
-    console.error('Supabase client not loaded');
-    return false;
+  if (typeof window.supabase !== 'undefined') {
+    supabase = window.supabase.createClient(
+      'https://qyantbqmxavlobsiexpn.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5YW50YnFteGF2bG9ic2lleHBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMDc4MjMsImV4cCI6MjA5MjU4MzgyM30.8VBtpmuqDcn6o5fugWYnu3Qzdhfytb9vBoS7yV0oJ5E'
+    );
+    return true;
   }
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  return true;
+  console.error('Supabase client not loaded');
+  return false;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!initSupabase()) {
-    showToast('Failed to load app. Please refresh.', 'error');
+    showToast('Failed to load. Please refresh.', 'error');
     return;
   }
   await checkSession();
