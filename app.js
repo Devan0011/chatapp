@@ -996,10 +996,6 @@ function showUserProfile() {
 }
 
 function startChatFromProfile() {
-  closeUserProfile();
-}
-
-function startChatFromProfile() {
   if (currentChat) {
     openChat(currentChat.id, currentChat.name);
   }
