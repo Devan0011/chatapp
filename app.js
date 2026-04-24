@@ -2,15 +2,48 @@
 // Complete JavaScript Implementation
 
 // ============================================
-// CONFIGURATION - Update these values!
+// CONFIGURATION
 // ============================================
 const SUPABASE_URL = 'https://qyantbqmxavlobsiexpn.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5YW50YnFteGF2bG9ic2lleHBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMDc4MjMsImV4cCI6MjA5MjU4MzgyM30.8VBtpmuqDcn6o5fugWYnu3Qzdhfytb9vBoS7yV0oJ5E';
 
+let supabase = null;
+
 // ============================================
-// SUPABASE CLIENT
+// INITIALIZATION
 // ============================================
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+function initSupabase() {
+  if (typeof window.supabase === 'undefined') {
+    console.error('Supabase client not loaded');
+    return false;
+  }
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  return true;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!initSupabase()) {
+    showToast('Failed to load app. Please refresh.', 'error');
+    return;
+  }
+  await checkSession();
+});
+
+// Handle auth state changes
+if (supabase) {
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT') {
+      showAuthScreen();
+    }
+  });
+}
+
+// Close modals on outside click
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal') && !e.target.closest('.modal-content')) {
+    e.target.classList.add('hidden');
+  }
+});
 
 // ============================================
 // STATE MANAGEMENT
@@ -1360,25 +1393,3 @@ function showToast(message, type = 'info') {
     toast.remove();
   }, 3000);
 }
-
-// ============================================
-// INITIALIZATION
-// ============================================
-
-document.addEventListener('DOMContentLoaded', () => {
-  checkSession();
-});
-
-// Handle auth state changes
-supabase.auth.onAuthStateChange((event, session) => {
-  if (event === 'SIGNED_OUT') {
-    showAuthScreen();
-  }
-});
-
-// Close modals on outside click
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('modal') && !e.target.closest('.modal-content')) {
-    e.target.classList.add('hidden');
-  }
-});
