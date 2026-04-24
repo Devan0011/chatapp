@@ -1,45 +1,9 @@
-// Make functions globally available
-window.handleLogin = handleLogin;
-window.handleRegister = handleRegister;
-window.showAuthForm = showAuthForm;
-window.showUserSettings = showUserSettings;
-window.showUserSearch = showUserSearch;
-window.filterChats = filterChats;
-window.closeChat = closeChat;
-window.handleMessageKeydown = handleMessageKeydown;
-window.sendMessage = sendMessage;
-window.showMessageActions = showMessageActions;
-window.editMessage = editMessage;
-window.forwardMessage = forwardMessage;
-window.deleteMessageForMe = deleteMessageForMe;
-window.deleteMessageForEveryone = deleteMessageForEveryone;
-window.closeMessageActions = closeMessageActions;
-window.closeForward = closeForward;
-window.searchForwardUsers = searchForwardUsers;
-window.closeUserSearch = closeUserSearch;
-window.showUserProfile = showUserProfile;
-window.closeUserProfile = closeUserProfile;
-window.startChatFromProfile = startChatFromProfile;
-window.startVoiceCall = startVoiceCall;
-window.startVideoCall = startVideoCall;
-window.acceptCall = acceptCall;
-window.rejectCall = rejectCall;
-window.endCall = endCall;
-window.toggleMute = toggleMute;
-window.toggleCamera = toggleCamera;
-window.showDeleteAccount = showDeleteAccount;
-window.closeDeleteAccount = closeDeleteAccount;
-window.deleteAccount = deleteAccount;
-window.handleLogout = handleLogout;
-window.triggerFileUpload = triggerFileUpload;
-window.handleFileSelect = handleFileSelect;
-window.toggleVoiceRecording = stopVoiceRecording;
-window.playAudio = playAudio;
-window.downloadFile = downloadFile;
-window.previewFile = previewFile;
-window.updateProfileName = updateProfileName;
+// ChatFlow - Real-time Messaging App
 
-// Supabase client reference
+// Supabase config
+const SUPABASE_URL = 'https://qyantbqmxavlobsiexpn.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5YW50YnFteGF2bG9ic2lleHBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMDc4MjMsImV4cCI6MjA5MjU4MzgyM30.8VBtpmuqDcn6o5fugWYnu3Qzdhfytb9vBoS7yV0oJ5E';
+
 let supabase = null;
 
 // ============================================
@@ -1429,3 +1393,71 @@ function showToast(message, type = 'info') {
     toast.remove();
   }, 3000);
 }
+
+// Expose all functions to window
+function exposeFunctions() {
+  window.handleLogin = handleLogin;
+  window.handleRegister = handleRegister;
+  window.showAuthForm = showAuthForm;
+  window.showUserSettings = showUserSettings;
+  window.showUserSearch = showUserSearch;
+  window.filterChats = filterChats;
+  window.closeChat = closeChat;
+  window.handleMessageKeydown = handleMessageKeydown;
+  window.sendMessage = sendMessage;
+  window.showMessageActions = showMessageActions;
+  window.editMessage = editMessage;
+  window.forwardMessage = forwardMessage;
+  window.deleteMessageForMe = deleteMessageForMe;
+  window.deleteMessageForEveryone = deleteMessageForEveryone;
+  window.closeMessageActions = closeMessageActions;
+  window.closeForward = closeForward;
+  window.searchForwardUsers = searchForwardUsers;
+  window.closeUserSearch = closeUserSearch;
+  window.showUserProfile = showUserProfile;
+  window.closeUserProfile = closeUserProfile;
+  window.startChatFromProfile = startChatFromProfile;
+  window.startVoiceCall = startVoiceCall;
+  window.startVideoCall = startVideoCall;
+  window.acceptCall = acceptCall;
+  window.rejectCall = rejectCall;
+  window.endCall = endCall;
+  window.toggleMute = toggleMute;
+  window.toggleCamera = toggleCamera;
+  window.showDeleteAccount = showDeleteAccount;
+  window.closeDeleteAccount = closeDeleteAccount;
+  window.deleteAccount = deleteAccount;
+  window.handleLogout = handleLogout;
+  window.triggerFileUpload = triggerFileUpload;
+  window.handleFileSelect = handleFileSelect;
+  window.toggleVoiceRecording = toggleVoiceRecording;
+  window.stopVoiceRecording = stopVoiceRecording;
+  window.playAudio = playAudio;
+  window.downloadFile = downloadFile;
+  window.previewFile = previewFile;
+  window.updateProfileName = updateProfileName;
+  window.showToast = showToast;
+  window.scrollToBottom = scrollToBottom;
+}
+
+// Init
+function initSupabase() {
+  if (typeof window.supabase !== 'undefined') {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return true;
+  }
+  return false;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!initSupabase()) {
+    showToast('Failed to load', 'error');
+    return;
+  }
+  exposeFunctions();
+  await checkSession();
+  
+  supabase?.auth?.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') showAuthScreen();
+  });
+});
